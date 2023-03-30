@@ -1,0 +1,24 @@
+name: FastMitoAssembler
+
+channels:
+  # - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/
+  # - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/
+  # - https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/conda-forge/
+  # - https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/bioconda/
+  - conda-forge
+  - bioconda
+  - defaults
+
+dependencies:
+  - python==3.9.*
+  - snakemake
+  - pygraphviz
+  - flask
+  - NOVOPlasty
+  - GetOrganelle
+  - spades
+  - blast
+  - mitoz
+  - seqkit
+
+# ssl_verify: false # not working

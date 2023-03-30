@@ -1,0 +1,1 @@
+from .novoplasty_config import NOVOPLASTY_CONFIG_TPL
