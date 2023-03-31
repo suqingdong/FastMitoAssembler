@@ -90,8 +90,7 @@ rule MEANGS:
         meangs_fas=MEANGS_DIR("{sample}_deep_detected_mito.fas"),
     params:
         outdir=MEANGS_DIR(),
-    message:
-        "MEANGS for sample: {wildcards.sample}"
+    message: "MEANGS for sample: {wildcards.sample}"
     shell:
         """
         export PATH=$PATH:{MEANGS_PATH}
@@ -136,6 +135,7 @@ rule NOVOPlasty_config:
         novoplasty_config=NOVOPLASTY_DIR("config.txt"),
     params:
         output_path=NOVOPLASTY_DIR() + os.path.sep,
+    message: "NOVOPlasty_config for sample: {wildcards.sample}"
     run:
         with safe_open(output.novoplasty_config, "w") as out:
             context = NOVOPLASTY_CONFIG_TPL.render(
@@ -144,12 +144,12 @@ rule NOVOPlasty_config:
                 fq1=input.fq1,
                 fq2=input.fq2,
                 output_path=params.output_path,
-                genome_min_size=12000,
-                genome_max_size=30000,
+                genome_min_size=GENOME_MIN_SIZE,
+                genome_max_size=GENOME_MAX_SIZE,
                 kmer_size=KMER_SIZE,
-                max_mem_gb=8,
+                max_mem_gb=MAX_MEM_GB,
                 read_length=READ_LENGTH,
-                insert_size=300,
+                insert_size=INSERT_SIZE,
             )
             out.write(context)
 
@@ -170,6 +170,7 @@ rule NOVOPlasty:
     output:
         novoplasty_contigs=NOVOPLASTY_DIR("Contigs_1_{sample}.fasta"),
         novoplasty_contigs_new=NOVOPLASTY_DIR("Contigs_1_{sample}.new.fasta"),
+    message: "NOVOPlasty for sample: {wildcards.sample}"
     shell:
         """
         NOVOPlasty.pl -c {input.novoplasty_config}
@@ -209,6 +210,7 @@ rule GetOrganelle:
         organelle_fasta_new=ORGANELL_DIR(f"{ORGANELLE_DB}.K127.complete.graph1.1.path_sequence.new.fasta"),
     params:
         output_path=ORGANELL_DIR(),
+    message: "GetOrganelle for sample: {wildcards.sample}"
     shell:
         """
         # get 5G data
@@ -271,6 +273,7 @@ rule MitozAnnotate:
         circos=MITOZ_ANNO_DIR(f"{{sample}}.{ORGANELLE_DB}.K127.complete.graph1.1.path_sequence.fasta.result", "circos.png"),
     params:
         outdir=MITOZ_ANNO_DIR()
+    message: "MitozAnnotate for sample: {wildcards.sample}"
     shell:
         """
         mkdir -p {params.outdir}
@@ -286,3 +289,4 @@ rule MitozAnnotate:
             --genetic_code {GENETIC_CODE} \\
             --clade {CLADE}
         """
+
