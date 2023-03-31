@@ -8,7 +8,7 @@ from FastMitoAssembler.config import NOVOPLASTY_CONFIG_TPL
 @click.group(
     help=click.style('FastMitoAssembler', fg='cyan')
 )
-def cli(**kwargs):
+def cli():
     pass
 
 
@@ -18,9 +18,12 @@ def cli(**kwargs):
 @click.option('-r', '--reads-dir', help='the directory of reads', required=True)
 @click.option('-o', '--result-dir', help='the directory of result', default='./result', show_default=True)
 @click.option('-d', '--organelle_database', help='the database for GetOrganelle', default='animal_mt', show_default=True)
-@click.option('--meangs-path', help='the path of MEANGS software', required=True)
 @click.option('-s', '--sample', help='the sample name', multiple=True, required=True)
-@click.option('--options', help='the options of snakemake', nargs=2, multiple=True)
+@click.option('--meangs-path', help='the path of MEANGS software', required=True)
+@click.option('--cores', help='the cores for snakemake', type=int, default=4, show_default=True)
+@click.option('--genes', help='the specific genes')
+@click.option('--gencode', help='the genetic code table', default=5, show_default=True)
+@click.option('--max_mem_gb', help='limit of RAM usage for NOVOPlasty', default=5, show_default=True)
 def run(**kwargs):
     config = {
         'organelle_database': kwargs['organelle_database'],
@@ -30,10 +33,8 @@ def run(**kwargs):
     }
 
     options = {
-        'cores': 4,
+        'cores': kwargs['cores'],
         'printshellcmds': True,
-        **dict(kwargs['options']),
-        # 'report': 'report.html',
     }
 
     snakemake.snakemake(MAIN_SMK, config=config, **options)
