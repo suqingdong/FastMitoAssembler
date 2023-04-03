@@ -1,0 +1,4 @@
+include requirements.txt
+include FastMitoAssembler/version.json
+include FastMitoAssembler/banner.txt
+recursive-include FastMitoAssembler/smk/ *

@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 
 BASE_DIR = Path(__file__).resolve().parent
-version_info = json.load(BASE_DIR.joinpath('project', 'version.json').open())
+version_info = json.load(BASE_DIR.joinpath('FastMitoAssembler', 'version.json').open())
 
 setup(
     name=version_info['prog'],
@@ -20,7 +20,7 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     entry_points={'console_scripts': [
-        'name = project.bin.main:main',
+        'FastMitoAssembler = FastMitoAssembler.bin:main',
     ]},
     classifiers=[
         'Development Status :: 5 - Production/Stable',

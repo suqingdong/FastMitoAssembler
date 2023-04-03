@@ -20,5 +20,3 @@ dependencies:
   - blast
   - mitoz
   - seqkit
-
-# ssl_verify: false # not working
