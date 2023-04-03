@@ -17,7 +17,7 @@ from FastMitoAssembler.util import safe_open
 # ==============================================================
 # Configuration information
 SAMPLES = config.get("samples") or ["XMYGLZHB02", "SRR039541.3"]
-MEANGS_PATH = config.get("MEANGS_PATH", "/PUBLIC/software/Disease/suqingdong/software/bio/meangs/MEANGS-master")
+MEANGS_PATH = config.get("meangs_path", "/PUBLIC/software/Disease/suqingdong/software/bio/meangs/MEANGS-master")
 ORGANELLE_DB = config.get("organelle_database", "animal_mt")
 
 # NOVOPlasty configuration
