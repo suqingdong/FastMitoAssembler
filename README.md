@@ -13,11 +13,11 @@
 #### 1. create environment
 ```bash
 # method 1: use conda
-conda env create -f envs/environment.yml
+conda env create -f environment.yml
 
 # method 2: use mamba
 conda install mamba -c conda-forge
-mamba env create -f envs/environment.yml
+mamba env create -f environment.yml
 
 # method 3: install manually
 conda create -n FastMitoAssembler -y python==3.9.*
@@ -29,11 +29,12 @@ conda install -n FastMitoAssembler -y blast
 conda install -n FastMitoAssembler -y mitoz
 conda install -n FastMitoAssembler -y seqkit
 
+conda install -n FastMitoAssembler -y click
 conda install -n FastMitoAssembler -y flask
 conda install -n FastMitoAssembler -y jinja2 
-conda install -n FastMitoAssembler -y pygraphviz
-
+conda install -n FastMitoAssembler -y pyyaml 
 ```
+
 #### 2. activate environment 
 ```bash
 source activate FastMitoAssembler
