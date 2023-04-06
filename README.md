@@ -1,4 +1,4 @@
-# Fast Assembler for MitoGenome
+# Fast Assembler Workflow for MitoGenome
 > `FastMitoAssembler` is a software for fast, accurate assembly of mitochondrial genomes and generation of annotation documents.
 
 ### Softwares

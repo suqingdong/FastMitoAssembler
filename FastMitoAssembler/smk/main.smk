@@ -17,7 +17,6 @@ from FastMitoAssembler.util import safe_open
 # ==============================================================
 # Configuration information
 SAMPLES = config.get("samples")
-MEANGS_PATH = config.get("meangs_path") or os.getenv('MEANGS_PATH')
 ORGANELLE_DB = config.get("organelle_database", "animal_mt")
 REF_SEQ = config.get('ref_seq', 'none')
 
@@ -101,8 +100,6 @@ rule MEANGS:
     message: "MEANGS for sample: {wildcards.sample}"
     shell:
         """
-        export PATH=$PATH:{MEANGS_PATH}
-
         mkdir -p {params.outdir}
         cd {params.outdir}
 
@@ -295,7 +292,6 @@ rule MitozAnnotate:
         cd {params.outdir}
 
         mitoz annotate \\
-            --workdir {params.outdir} \\
             --outprefix {wildcards.sample} \\
             --thread_number {THREAD_NUMBER} \\
             --fastafiles {input.organelle_fasta_new} \\

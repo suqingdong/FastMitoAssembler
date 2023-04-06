@@ -10,12 +10,11 @@ from FastMitoAssembler import MAIN_SMK, CONFIG_DEFAULT
 
 @click.command(help='run the workflow', no_args_is_help=True)
 # custom configs
-@click.option('-r', '--reads-dir', help='the directory of reads')
-@click.option('-o', '--result-dir', help='the directory of result', default='./result', show_default=True)
+@click.option('-r', '--reads_dir', help='the root directory of reads')
+@click.option('-o', '--result_dir', help='the directory of result', default='result', show_default=True)
 @click.option('-d', '--organelle_database', help='the database for GetOrganelle', default='animal_mt', show_default=True)
 @click.option('-s', '--samples', help='the sample name', multiple=True)
 @click.option('--fq_path_pattern', help='the path pattern of fastq file', default='{sample}/{sample}_1.clean.fq.gz', show_default=True)
-@click.option('--meangs-path', help='the path of MEANGS software', envvar='MEANGS_PATH', show_envvar=True)
 
 # optional configs
 @click.option('--genetic_code', help='the genetic code table', type=int, default=5, show_default=True)
@@ -40,7 +39,7 @@ def run(**kwargs):
 
     config = {}
     arguments = (
-        'reads_dir result_dir organelle_database samples meangs_path '
+        'reads_dir result_dir organelle_database samples '
         'genetic_code genome_min_size genome_max_size insert_size kmer_size '
         'read_length max_mem_gb reference genes fq_path_pattern '
     ).strip().split()
