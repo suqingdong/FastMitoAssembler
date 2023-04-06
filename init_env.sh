@@ -24,4 +24,6 @@ conda install -n FastMitoAssembler -y jinja2
 # conda install -n FastMitoAssembler -y pygraphviz
 
 # activate
-source activate FastMitoAssembler
+source $(dirname `which conda`)/activate FastMitoAssembler
+python -m pip insatll genbank
+

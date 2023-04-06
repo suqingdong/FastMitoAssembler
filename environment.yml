@@ -8,6 +8,7 @@ channels:
 
 dependencies:
   - python==3.9.*
+  - pip
   - snakemake
   - NOVOPlasty
   - GetOrganelle
@@ -16,8 +17,10 @@ dependencies:
   - mitoz
   - seqkit
   - meangs
-  - pip
+  - pip:
     - click
     - flask
     - jinja2
     - pyyaml
+    - genbank
+

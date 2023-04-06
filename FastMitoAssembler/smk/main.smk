@@ -9,7 +9,7 @@ from pathlib import Path
 from functools import partial
 
 # Use in development
-FastMitoAssemblerPath = config.get("FastMitoAssemblerPath", "/PUBLIC/software/Disease/suqingdong/Code/FastMitoAssembler")
+FastMitoAssemblerPath = config.get("FastMitoAssemblerPath") or os.getenv('FastMitoAssemblerPath')
 sys.path.insert(0, FastMitoAssemblerPath)
 from FastMitoAssembler.config import NOVOPLASTY_CONFIG_TPL
 from FastMitoAssembler.util import safe_open
