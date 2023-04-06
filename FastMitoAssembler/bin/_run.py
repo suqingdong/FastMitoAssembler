@@ -5,43 +5,17 @@ import yaml
 import click
 import snakemake
 
-from FastMitoAssembler import MAIN_SMK, CONFIG_DEFAULT, VERSION, BANNER
+from FastMitoAssembler import MAIN_SMK, CONFIG_DEFAULT
 
 
-CONTEXT_SETTINGS = dict(help_option_names=['-?', '-h', '--help'], max_content_width=800,)
-BANNER = '\b\n'.join(BANNER.split('\n'))
-HELP = f'''\n\n\b\n{BANNER}\n'''
-
-
-@click.group(
-    help=click.style(HELP, fg='cyan', italic=True),
-    name=VERSION['prog'],
-    context_settings=CONTEXT_SETTINGS,
-)
-@click.version_option(version=VERSION['version'], prog_name=VERSION['prog'])
-def cli():
-    pass
-
-
-@cli.command(
-    help='check the environments',
-)
-def check(**kwargs):
-    print('check MEANGS ...')
-
-
-
-
-@cli.command(
-    help='run the workflow',
-    no_args_is_help=True,
-)
+@click.command(help='run the workflow', no_args_is_help=True)
 # custom configs
-@click.option('-r', '--reads-dir', help='the directory of reads', required=True)
+@click.option('-r', '--reads-dir', help='the directory of reads')
 @click.option('-o', '--result-dir', help='the directory of result', default='./result', show_default=True)
 @click.option('-d', '--organelle_database', help='the database for GetOrganelle', default='animal_mt', show_default=True)
-@click.option('-s', '--samples', help='the sample name', multiple=True, required=True)
-@click.option('--meangs-path', help='the path of MEANGS software', required=True, envvar='MEANGS_PATH', show_envvar=True)
+@click.option('-s', '--samples', help='the sample name', multiple=True)
+@click.option('--fq_path_pattern', help='the path pattern of fastq file', default='{sample}/{sample}_1.clean.fq.gz', show_default=True)
+@click.option('--meangs-path', help='the path of MEANGS software', envvar='MEANGS_PATH', show_envvar=True)
 
 # optional configs
 @click.option('--genetic_code', help='the genetic code table', type=int, default=5, show_default=True)
@@ -64,18 +38,17 @@ def check(**kwargs):
 @click.option('--dryrun', help='do not execute anything, and display what would bedone', is_flag=True)
 def run(**kwargs):
 
-    print(kwargs['meangs_path'])
-
     config = {}
     arguments = (
         'reads_dir result_dir organelle_database samples meangs_path '
         'genetic_code genome_min_size genome_max_size insert_size kmer_size '
-        'read_length max_mem_gb reference genes '
+        'read_length max_mem_gb reference genes fq_path_pattern '
     ).strip().split()
     for key in arguments:
         if kwargs[key]:
             config[key] = kwargs[key]
 
+    # higher priority
     if kwargs['configfile'] and os.path.isfile(kwargs['configfile']):
         click.secho('>>> reading config from file: {configfile}'.format(**kwargs), fg='green', err=True)
         with open(kwargs['configfile']) as f:
@@ -94,10 +67,3 @@ def run(**kwargs):
 
     snakemake.snakemake(kwargs['snakefile'], config=config, **options)
 
-
-def main():
-    cli()
-
-
-if __name__ == '__main__':
-    main()
