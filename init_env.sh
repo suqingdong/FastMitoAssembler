@@ -16,8 +16,8 @@ conda install -n FastMitoAssembler -y mitoz
 conda install -n FastMitoAssembler -y seqkit
 
 conda install -n FastMitoAssembler -y flask
-conda install -n FastMitoAssembler -y jinja2 
-conda install -n FastMitoAssembler -y pygraphviz
+conda install -n FastMitoAssembler -y jinja2
+# conda install -n FastMitoAssembler -y pygraphviz
 
 # activate
 source activate FastMitoAssembler
