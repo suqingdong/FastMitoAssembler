@@ -1,5 +1,7 @@
 reads_dir:
 samples: []
+result_dir: 'result'
+fq_path_pattern: '{sample}/{sample}_1.clean.fq.gz'
 meangs_path: '/PUBLIC/software/Disease/suqingdong/software/bio/meangs/MEANGS-master'
 organelle_database: 'animal_mt'
 genome_min_size: 12000
@@ -11,7 +13,6 @@ insert_size: 300
 clade: 'Annelida-segmented-worms'
 genetic_code: 5
 thread_number: 20
-result_dir: 'result'
 
 reference:
 genes:

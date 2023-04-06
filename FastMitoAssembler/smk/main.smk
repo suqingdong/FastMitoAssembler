@@ -16,8 +16,8 @@ from FastMitoAssembler.util import safe_open
 
 # ==============================================================
 # Configuration information
-SAMPLES = config.get("samples") or ["XMYGLZHB02", "SRR039541.3"]
-MEANGS_PATH = config.get("meangs_path", "/PUBLIC/software/Disease/suqingdong/software/bio/meangs/MEANGS-master")
+SAMPLES = config.get("samples")
+MEANGS_PATH = config.get("meangs_path") or os.getenv('MEANGS_PATH')
 ORGANELLE_DB = config.get("organelle_database", "animal_mt")
 
 # NOVOPlasty configuration
@@ -46,8 +46,13 @@ MITOZ_ANNO_DIR = partial(SAMPLE_DIR, "4.MitozAnnotate")
 # ==============================================================
 # Read data
 READS_DIR = Path(config.get("reads_dir", ".")).resolve()
-FQ1 = READS_DIR.joinpath("{sample}_1.clean.fq.gz")
-FQ2 = READS_DIR.joinpath("{sample}_2.clean.fq.gz")
+FQ_PATH_PATTERN = config.get('fq_path_pattern', '{sample}/{sample}_1.clean.fq.gz')
+FQ1 = READS_DIR.joinpath(FQ_PATH_PATTERN)
+FQ2 = READS_DIR.joinpath(FQ_PATH_PATTERN.replace('1', '2'))
+
+
+# FQ1 = READS_DIR.joinpath("{sample}_1.clean.fq.gz")
+# FQ2 = READS_DIR.joinpath("{sample}_2.clean.fq.gz")
 READS_NUM_5G = round(5e9 / 2 / READ_LENGTH)
 # ==============================================================
 
@@ -206,10 +211,11 @@ rule GetOrganelle:
         fq2=FQ2,
         novoplasty_contigs_new=NOVOPLASTY_DIR("Contigs_1_{sample}.new.fasta"),
     output:
-        organelle_fasta=ORGANELL_DIR(f"{ORGANELLE_DB}.K127.complete.graph1.1.path_sequence.fasta"),
+        organelle_fasta=ORGANELL_DIR("organelle", f"{ORGANELLE_DB}.K127.complete.graph1.1.path_sequence.fasta"),
         organelle_fasta_new=ORGANELL_DIR(f"{ORGANELLE_DB}.K127.complete.graph1.1.path_sequence.new.fasta"),
     params:
         output_path=ORGANELL_DIR(),
+        output_path_temp=ORGANELL_DIR("organelle"),
     message: "GetOrganelle for sample: {wildcards.sample}"
     shell:
         """
@@ -217,26 +223,30 @@ rule GetOrganelle:
         mkdir -p {params.output_path}
         cd {params.output_path}
 
-        seqkit stats {input.fq1} > {wildcards.sample}.fq1.stats.txt
-        reads_num_fq1=$(awk 'NR==2{{print $4}}' {wildcards.sample}.fq1.stats.txt | sed 's#,##g')
-        echo "reads num of fq1: $reads_num_fq1"
+        if [ ! -e {wildcards.sample}_1.5G.fq.gz ];then
+            seqkit stats {input.fq1} > {wildcards.sample}.fq1.stats.txt
+            reads_num_fq1=$(awk 'NR==2{{print $4}}' {wildcards.sample}.fq1.stats.txt | sed 's#,##g')
+            echo "reads num of fq1: $reads_num_fq1"
 
-        if [ $reads_num_fq1 -gt {READS_NUM_5G} ];then
-            seqkit head -n {READS_NUM_5G} -w0 {input.fq1} -j4 -o {wildcards.sample}_1.5G.fq.gz
-            seqkit head -n {READS_NUM_5G} -w0 {input.fq2} -j4 -o {wildcards.sample}_2.5G.fq.gz
-        else
-            ln -sf {input.fq1} {wildcards.sample}_1.5G.fq.gz
-            ln -sf {input.fq2} {wildcards.sample}_2.5G.fq.gz
+            if [ $reads_num_fq1 -gt {READS_NUM_5G} ];then
+                seqkit head -n {READS_NUM_5G} -w0 {input.fq1} -j4 -o {wildcards.sample}_1.5G.fq.gz
+                seqkit head -n {READS_NUM_5G} -w0 {input.fq2} -j4 -o {wildcards.sample}_2.5G.fq.gz
+            else
+                ln -sf {input.fq1} {wildcards.sample}_1.5G.fq.gz
+                ln -sf {input.fq2} {wildcards.sample}_2.5G.fq.gz
+            fi
         fi
+
 
         # run GetOrganelle
         get_organelle_from_reads.py \\
+            --continue \\
             -1 {wildcards.sample}_1.5G.fq.gz\\
-            -2 {wildcards.sample}_1.5G.fq.gz \\
+            -2 {wildcards.sample}_2.5G.fq.gz \\
             -R 20 \\
             -k 21,33,45,55,65,75,85,95,105,111,127 \\
             -F {ORGANELLE_DB} \\
-            -o {params.output_path} \\
+            -o {params.output_path_temp} \\
             --reduce-reads-for-coverage inf \\
             --max-reads inf \\
             -s {input.novoplasty_contigs_new}
@@ -289,4 +299,3 @@ rule MitozAnnotate:
             --genetic_code {GENETIC_CODE} \\
             --clade {CLADE}
         """
-
