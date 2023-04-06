@@ -19,6 +19,7 @@ from FastMitoAssembler.util import safe_open
 SAMPLES = config.get("samples")
 MEANGS_PATH = config.get("meangs_path") or os.getenv('MEANGS_PATH')
 ORGANELLE_DB = config.get("organelle_database", "animal_mt")
+REF_SEQ = config.get('ref_seq', 'none')
 
 # NOVOPlasty configuration
 GENOME_MIN_SIZE = config.get('genome_min_size', 12000)
@@ -64,7 +65,7 @@ rule all:
     message: "Congratulations, the pipeline process is complete!"
     input:
         expand(
-            MITOZ_ANNO_DIR(f"{{sample}}.{ORGANELLE_DB}.K127.complete.graph1.1.path_sequence.fasta.result", "circos.png"),
+            MITOZ_ANNO_DIR(f"{{sample}}.{ORGANELLE_DB}.K127.scaffolds.graph1.1.path_sequence.new.fasta.result", "circos.png"),
             sample=SAMPLES,
         ),
     run:
@@ -80,10 +81,11 @@ rule MEANGS:
     fq1, fq2: Paired clean FASTQ format files.
 
     Output:
-    meangs_fas: A FASTA format file of the detected mitochondrial sequence containing only the longest sequence.
+    seed_fas: A FASTA format file of the detected mitochondrial sequence containing only the longest sequence.
 
     Parameters:
     outdir: Output directory.
+    sed: use sed as sed_fas
 
     Note:
     Keep the first reads only as output
@@ -92,9 +94,10 @@ rule MEANGS:
         fq1=FQ1,
         fq2=FQ2,
     output:
-        meangs_fas=MEANGS_DIR("{sample}_deep_detected_mito.fas"),
+        seed_fas=MEANGS_DIR("{sample}_deep_detected_mito.fas"),
     params:
         outdir=MEANGS_DIR(),
+        ref_seq=REF_SEQ,
     message: "MEANGS for sample: {wildcards.sample}"
     shell:
         """
@@ -103,19 +106,21 @@ rule MEANGS:
         mkdir -p {params.outdir}
         cd {params.outdir}
 
-        meangs.py \\
-            -1 {input.fq1} \\
-            -2 {input.fq2} \\
-            -o {wildcards.sample} \\
-            -t 2 \\
-            -n 2000000 \\
-            -i 350 \\
-            --deepin
-
-        # keep the first reads only
-        seqkit head -n1 -w0 \\
-            -o {output.meangs_fas} \\
-            {wildcards.sample}/{wildcards.sample}_deep_detected_mito.fas
+        if [[ {params.ref_seq} =~ \.gb[kf]?$ ]];then
+            genbank.py -f fasta {params.ref_seq} | seqkit head -n1 -w0 -o {output.seed_fas}
+        elif [[ {params.ref_seq} =~ \.fa[sta]*$ ]];
+            seqkit head -n1 -w0 -o {output.seed_fas} {params.ref_seq} 
+        else
+            meangs.py \\
+                -1 {input.fq1} \\
+                -2 {input.fq2} \\
+                -o {wildcards.sample} \\
+                -t 2 \\
+                -n 2000000 \\
+                -i 350 \\
+                --deepin
+            seqkit head -n1 -w0 -o {output.seed_fas} {wildcards.sample}/{wildcards.sample}_deep_detected_mito.fas
+        fi
         """
 
 rule NOVOPlasty_config:
@@ -124,7 +129,7 @@ rule NOVOPlasty_config:
 
     Input:
     fq1, fq2: Paired clean FASTQ format files.
-    meangs_fas: A FASTA format file of the detected mitochondrial sequence containing only the longest sequence obtained by MEANGS.
+    seed_fas: A FASTA format file of the detected mitochondrial sequence containing only the longest sequence obtained by MEANGS.
 
     Output:
     novoplasty_config: The configuration file for NOVOPlasty.
@@ -135,7 +140,7 @@ rule NOVOPlasty_config:
     input:
         fq1=FQ1,
         fq2=FQ2,
-        meangs_fas=MEANGS_DIR("{sample}_deep_detected_mito.fas"),
+        seed_fas=MEANGS_DIR("{sample}_deep_detected_mito.fas"),
     output:
         novoplasty_config=NOVOPLASTY_DIR("config.txt"),
     params:
@@ -144,7 +149,7 @@ rule NOVOPlasty_config:
     run:
         with safe_open(output.novoplasty_config, "w") as out:
             context = NOVOPLASTY_CONFIG_TPL.render(
-                seed_fasta=input.meangs_fas,
+                seed_fasta=input.seed_fas,
                 sample=wildcards.sample,
                 fq1=input.fq1,
                 fq2=input.fq2,
@@ -211,8 +216,8 @@ rule GetOrganelle:
         fq2=FQ2,
         novoplasty_contigs_new=NOVOPLASTY_DIR("Contigs_1_{sample}.new.fasta"),
     output:
-        organelle_fasta=ORGANELL_DIR("organelle", f"{ORGANELLE_DB}.K127.complete.graph1.1.path_sequence.fasta"),
-        organelle_fasta_new=ORGANELL_DIR(f"{ORGANELLE_DB}.K127.complete.graph1.1.path_sequence.new.fasta"),
+        organelle_fasta=ORGANELL_DIR("organelle", f"{ORGANELLE_DB}.K127.scaffolds.graph1.1.path_sequence.fasta"),
+        organelle_fasta_new=ORGANELL_DIR(f"{ORGANELLE_DB}.K127.scaffolds.graph1.1.path_sequence.new.fasta"),
     params:
         output_path=ORGANELL_DIR(),
         output_path_temp=ORGANELL_DIR("organelle"),
@@ -252,7 +257,7 @@ rule GetOrganelle:
             -s {input.novoplasty_contigs_new}
 
         # replace '+', 'circular' characters
-        seqkit replace -w0\\
+        seqkit replace -w0 \\
             -p ".*(circulars).*" -r "{wildcards.sample} topology=circular" \\
             -p ".+" -r "{wildcards.sample} topology=linear" \\
             -o {output.organelle_fasta_new} \\
@@ -278,15 +283,16 @@ rule MitozAnnotate:
     input:
         fq1=FQ1,
         fq2=FQ2,
-        organelle_fasta_new=ORGANELL_DIR(f"{ORGANELLE_DB}.K127.complete.graph1.1.path_sequence.new.fasta"),
+        organelle_fasta_new=ORGANELL_DIR(f"{ORGANELLE_DB}.K127.scaffolds.graph1.1.path_sequence.new.fasta"),
     output:
-        circos=MITOZ_ANNO_DIR(f"{{sample}}.{ORGANELLE_DB}.K127.complete.graph1.1.path_sequence.fasta.result", "circos.png"),
+        circos=MITOZ_ANNO_DIR(f"{{sample}}.{ORGANELLE_DB}.K127.scaffolds.graph1.1.path_sequence.new.fasta.result", "circos.png"),
     params:
         outdir=MITOZ_ANNO_DIR()
     message: "MitozAnnotate for sample: {wildcards.sample}"
     shell:
         """
         mkdir -p {params.outdir}
+        cd {params.outdir}
 
         mitoz annotate \\
             --workdir {params.outdir} \\

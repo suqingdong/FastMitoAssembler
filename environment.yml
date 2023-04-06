@@ -1,12 +1,9 @@
 name: FastMitoAssembler
 
 channels:
-  # - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/main/
-  # - https://mirrors.tuna.tsinghua.edu.cn/anaconda/pkgs/free/
-  # - https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/conda-forge/
-  # - https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/bioconda/
   - conda-forge
   - bioconda
+  - yccscucib
   - defaults
 
 dependencies:
@@ -18,7 +15,9 @@ dependencies:
   - blast
   - mitoz
   - seqkit
-  - click
-  - flask
-  - jinja2
-  - pyyaml
+  - meangs
+  - pip
+    - click
+    - flask
+    - jinja2
+    - pyyaml

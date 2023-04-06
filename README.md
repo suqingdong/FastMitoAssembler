@@ -32,7 +32,7 @@ conda install -n FastMitoAssembler -y seqkit
 conda install -n FastMitoAssembler -y click
 conda install -n FastMitoAssembler -y flask
 conda install -n FastMitoAssembler -y jinja2 
-conda install -n FastMitoAssembler -y pyyaml 
+conda install -n FastMitoAssembler -y pyyaml
 ```
 
 #### 2. activate environment 
