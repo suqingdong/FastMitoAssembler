@@ -15,8 +15,8 @@
 # method 1: use conda
 conda env create -f environment.yml
 
-# method 2: use mamba
-conda install mamba -c conda-forge
+# method 2: use mamba [recommended]
+conda install mamba -c conda-forge -y
 mamba env create -f environment.yml
 
 # method 3: install manually
@@ -37,7 +37,8 @@ conda install -n FastMitoAssembler -y pyyaml
 
 #### 2. activate environment 
 ```bash
-source activate FastMitoAssembler
+source $(dirname `which conda`)/activate FastMitoAssembler
+python -m pip insatll genbank
 ```
 
 #### 3. install FastMitoAssembler

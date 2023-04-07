@@ -34,8 +34,11 @@ def ncbitaxa(**kwargs):
 def organelle(**kwargs):
     cmd = 'get_organelle_config.py --list'
     status, output = util.getstatusoutput(cmd)
-    click.secho(f'configured databases:\n{output}', fg='cyan')
-    configured_dbs = set([db.split()[0] for db in output.strip().split('\n')])
+    configured_dbs = set([db.split()[0] for db in output.strip().split('\n') if db])
+    if configured_dbs:
+        click.secho(f'configured databases:\n{output}', fg='cyan')
+    else:
+        click.secho(f'no configured databases', fg='yellow')
 
     if not kwargs['list']:
         databases = ORGANELLE_DB_LIST[1:] if 'all' in kwargs['add'] else kwargs['add']

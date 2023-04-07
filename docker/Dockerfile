@@ -15,4 +15,5 @@ RUN \
   echo "source /opt/miniconda3/bin/activate FastMitoAssembler" >> ~/.bashrc && \
   source /opt/miniconda3/bin/activate FastMitoAssembler && \
   python -m pip install FastMitoAssembler-1.0.1-py3-none-any.whl && \
+  python -c 'import ete3; ete3.NCBITaxa()' && \
   rm -f environment.yml FastMitoAssembler-1.0.1-py3-none-any.whl
