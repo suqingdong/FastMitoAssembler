@@ -17,10 +17,8 @@ dependencies:
   - mitoz
   - seqkit
   - meangs
+  - click
+  - jinja2
+  - pyyaml
   - pip:
-    - click
-    - flask
-    - jinja2
-    - pyyaml
     - genbank
-

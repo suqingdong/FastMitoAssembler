@@ -20,19 +20,19 @@ conda install mamba -c conda-forge -y
 mamba env create -f environment.yml
 
 # method 3: install manually
-conda create -n FastMitoAssembler -y python==3.9.*
-conda install -n FastMitoAssembler -y snakemake
-conda install -n FastMitoAssembler -y NOVOPlasty
-conda install -n FastMitoAssembler -y GetOrganelle
-conda install -n FastMitoAssembler -y spades
-conda install -n FastMitoAssembler -y blast
-conda install -n FastMitoAssembler -y mitoz
-conda install -n FastMitoAssembler -y seqkit
+mamba create -n FastMitoAssembler -y python==3.9.*
+mamba install -n FastMitoAssembler -y snakemake
+mamba install -n FastMitoAssembler -y NOVOPlasty
+mamba install -n FastMitoAssembler -y GetOrganelle
+mamba install -n FastMitoAssembler -y spades
+mamba install -n FastMitoAssembler -y blast
+mamba install -n FastMitoAssembler -y mitoz
+mamba install -n FastMitoAssembler -y seqkit
+mamba install -n FastMitoAssembler -y meangs
 
-conda install -n FastMitoAssembler -y click
-conda install -n FastMitoAssembler -y flask
-conda install -n FastMitoAssembler -y jinja2 
-conda install -n FastMitoAssembler -y pyyaml
+mamba install -n FastMitoAssembler -y click
+mamba install -n FastMitoAssembler -y jinja2 
+mamba install -n FastMitoAssembler -y pyyaml
 ```
 
 #### 2. activate environment 
@@ -58,14 +58,6 @@ FastMitoAssembler prepare organelle --list  # list configured databases
 FastMitoAssembler prepare organelle -a animal_mt  # config a single database
 FastMitoAssembler prepare organelle -a animal_mt -a embplant_mt # config multiple databaes
 FastMitoAssembler prepare organelle -a all  # config all databases
-
-# 3. config MEANGS
-- Install `MEANGS` according to: https://github.com/YanCCscu/MEANGS
-# you can set `MEANGS_PATH` to your environment file(eg. ~/.bash_profile)
-echo 'export MEANGS_PATH=$PATH:/path/to/your/meangs_dir' >> ~/.bash_profile
-# you can also use the path by parameter in the workflow below
---meangs-path /path/to/your/meangs_dir
-```
 
 ### Usage
 #### Use with Client
