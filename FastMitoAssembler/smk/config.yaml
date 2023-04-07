@@ -13,5 +13,5 @@ clade: 'Annelida-segmented-worms'
 genetic_code: 5
 thread_number: 20
 
-reference:
+seed_input:
 genes:

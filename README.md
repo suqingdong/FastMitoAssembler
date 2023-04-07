@@ -12,14 +12,18 @@
 ### Installation
 #### 1. create environment
 ```bash
-# method 1: use conda
+# method 1: use conda [slowly and need large resources]
 conda env create -f environment.yml
 
-# method 2: use mamba [recommended]
+# method 2: use mamba [*recommended*]
 conda install mamba -c conda-forge -y
 mamba env create -f environment.yml
 
 # method 3: install manually
+conda config --add channels yccscucib
+conda config --add channels bioconda
+conda config --add channels conda-forge
+
 mamba create -n FastMitoAssembler -y python==3.9.*
 mamba install -n FastMitoAssembler -y snakemake
 mamba install -n FastMitoAssembler -y NOVOPlasty
@@ -33,17 +37,21 @@ mamba install -n FastMitoAssembler -y meangs
 mamba install -n FastMitoAssembler -y click
 mamba install -n FastMitoAssembler -y jinja2 
 mamba install -n FastMitoAssembler -y pyyaml
+
+source $(dirname `which conda`)/activate FastMitoAssembler
+python -m pip insatll genbank
 ```
 
 #### 2. activate environment 
 ```bash
 source $(dirname `which conda`)/activate FastMitoAssembler
-python -m pip insatll genbank
 ```
 
 #### 3. install FastMitoAssembler
 ```bash
 python -m pip install -U FastMitoAssembler
+# or
+python -m pip install -U dist/FastMitoAssembler*whl
 ```
 
 ### Prepare
@@ -51,7 +59,9 @@ python -m pip install -U FastMitoAssembler
 FastMitoAssembler prepare
 
 # 1. prepare ete3.NCBITaxa
-FastMitoAssembler prepare ncbitaxa
+- `FastMitoAssembler prepare ncbitaxa # download taxdump.tar.gz automaticlly`
+
+FastMitoAssembler prepare ncbitaxa --taxdump_file taxdump.tar.gz 
 
 # 2. prepare database for GetOrganelle
 FastMitoAssembler prepare organelle --list  # list configured databases

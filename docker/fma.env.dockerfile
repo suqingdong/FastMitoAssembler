@@ -13,4 +13,4 @@ COPY ../environment.yml /work/
 RUN \
   mamba env create -f environment.yml && \
   echo "source /opt/miniconda3/bin/activate FastMitoAssembler" >> ~/.bashrc && \
-  rm -f environment.yml
+  rm -rf environment.yml /opt/miniconda3/pkgs/*

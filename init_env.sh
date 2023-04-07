@@ -1,29 +1,7 @@
-# 1. use conda
-# conda env create -f envs/environment.yml
+# install conda if not conda is not installed 
+# wget -c https://mirrors.tuna.tsinghua.edu.cn/anaconda/miniconda/Miniconda3-latest-Linux-x86_64.sh
+# sh Miniconda3-latest-Linux-x86_64.sh -bfp /opt/miniconda3
+# echo 'export PATH=/opt/miniconda3/bin:$PATH' >> ~/.bashrc
 
-# 2. use mamba
-# conda install mamba -c conda-forge
-# mamba env create -f envs/environment.yml
-
-# 3. install manually
-conda config --add channels yccscucib
-conda config --add channels bioconda
-conda config --add channels conda-forge
-
-conda create -n FastMitoAssembler -y python==3.9.*
-conda install -n FastMitoAssembler -y snakemake
-conda install -n FastMitoAssembler -y NOVOPlasty
-conda install -n FastMitoAssembler -y GetOrganelle
-conda install -n FastMitoAssembler -y spades
-conda install -n FastMitoAssembler -y blast
-conda install -n FastMitoAssembler -y mitoz
-conda install -n FastMitoAssembler -y seqkit
-
-conda install -n FastMitoAssembler -y flask
-conda install -n FastMitoAssembler -y jinja2
-# conda install -n FastMitoAssembler -y pygraphviz
-
-# activate
-source $(dirname `which conda`)/activate FastMitoAssembler
-python -m pip insatll genbank
-
+conda install mamba -c conda-forge -y
+mamba env create -f environment.yml

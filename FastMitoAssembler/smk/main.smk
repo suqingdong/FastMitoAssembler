@@ -18,7 +18,8 @@ from FastMitoAssembler.util import safe_open
 # Configuration information
 SAMPLES = config.get("samples")
 ORGANELLE_DB = config.get("organelle_database", "animal_mt")
-REF_SEQ = Path(config.get('ref_seq', 'none')).resolve()
+SEED_INPUT = config.get('seed_input')
+SEED_INPUT = Path(SEED_INPUT).resolve() if SEED_INPUT else 'none'
 
 # NOVOPlasty configuration
 GENOME_MIN_SIZE = config.get('genome_min_size', 12000)
@@ -84,7 +85,7 @@ rule MEANGS:
 
     Parameters:
     outdir: Output directory.
-    ref_seq: use a input fasta/genbank as seed_fas
+    seed_input: use a input fasta/genbank as seed_fas
 
     Note:
     Keep the first reads only as output
@@ -96,19 +97,19 @@ rule MEANGS:
         seed_fas=MEANGS_DIR("{sample}_deep_detected_mito.fas"),
     params:
         outdir=MEANGS_DIR(),
-        ref_seq=REF_SEQ,
+        seed_input=SEED_INPUT,
     message: "MEANGS for sample: {wildcards.sample}"
     shell:
         """
         mkdir -p {params.outdir}
         cd {params.outdir}
 
-        ref_seq={params.ref_seq}
+        seed_input={params.seed_input}
 
-        if [[ $ref_seq =~ \.gb[kf]?$ ]];then
-            genbank.py -f fasta $ref_seq | seqkit head -n1 -w0 -o {output.seed_fas}
-        elif [[ $ref_seq =~ \.fa[sta]*$ ]];then
-            seqkit head -n1 -w0 -o {output.seed_fas} $ref_seq 
+        if [[ $seed_input =~ \.gb[kf]?$ ]];then
+            genbank.py -f fasta $seed_input | seqkit head -n1 -w0 -o {output.seed_fas}
+        elif [[ $seed_input =~ \.fa[sta]*$ ]];then
+            seqkit head -n1 -w0 -o {output.seed_fas} $seed_input 
         else
             meangs.py \\
                 -1 {input.fq1} \\
@@ -225,10 +226,10 @@ rule GetOrganelle:
     message: "GetOrganelle for sample: {wildcards.sample}"
     shell:
         """
-        # get 5G data
         mkdir -p {params.output_path}
         cd {params.output_path}
 
+        # get 5G data
         if [ ! -e {wildcards.sample}_1.5G.fq.gz ];then
             seqkit stats {input.fq1} > {wildcards.sample}.fq1.stats.txt
             reads_num_fq1=$(awk 'NR==2{{print $4}}' {wildcards.sample}.fq1.stats.txt | sed 's#,##g')
@@ -242,7 +243,6 @@ rule GetOrganelle:
                 ln -sf {input.fq2} {wildcards.sample}_2.5G.fq.gz
             fi
         fi
-
 
         # run GetOrganelle
         get_organelle_from_reads.py \\

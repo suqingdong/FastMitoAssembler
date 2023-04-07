@@ -25,7 +25,7 @@ from FastMitoAssembler import MAIN_SMK, CONFIG_DEFAULT
 @click.option('--read_length', help='the read length of Illumina short reads', type=int, default=150, show_default=True)
 @click.option('--max_mem_gb', help='the limit of RAM usage for NOVOPlasty (unit: GB)', type=int, default=5, show_default=True)
 
-@click.option('--reference', help='the specific reference, .fasta or .gb')
+@click.option('--seed_input', help='use a specific seed input, .fasta, or .gb')
 @click.option('--genes', help='the specific genes')
 
 # snakefile and configfile
@@ -41,7 +41,7 @@ def run(**kwargs):
     arguments = (
         'reads_dir result_dir organelle_database samples '
         'genetic_code genome_min_size genome_max_size insert_size kmer_size '
-        'read_length max_mem_gb reference genes fq_path_pattern '
+        'read_length max_mem_gb seed_input genes fq_path_pattern '
     ).strip().split()
     for key in arguments:
         if kwargs[key]:
