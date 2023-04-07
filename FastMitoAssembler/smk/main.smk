@@ -9,8 +9,8 @@ from pathlib import Path
 from functools import partial
 
 # Use in development
-FastMitoAssemblerPath = config.get("FastMitoAssemblerPath") or os.getenv('FastMitoAssemblerPath')
-sys.path.insert(0, FastMitoAssemblerPath)
+FAST_MITO_AS_PATH = config.get("FAST_MITO_AS_PATH") or os.getenv('FAST_MITO_AS_PATH')
+sys.path.insert(0, FAST_MITO_AS_PATH)
 from FastMitoAssembler.config import NOVOPLASTY_CONFIG_TPL
 from FastMitoAssembler.util import safe_open
 
@@ -18,7 +18,7 @@ from FastMitoAssembler.util import safe_open
 # Configuration information
 SAMPLES = config.get("samples")
 ORGANELLE_DB = config.get("organelle_database", "animal_mt")
-REF_SEQ = config.get('ref_seq', 'none')
+REF_SEQ = Path(config.get('ref_seq', 'none')).resolve()
 
 # NOVOPlasty configuration
 GENOME_MIN_SIZE = config.get('genome_min_size', 12000)
@@ -84,7 +84,7 @@ rule MEANGS:
 
     Parameters:
     outdir: Output directory.
-    sed: use sed as sed_fas
+    ref_seq: use a input fasta/genbank as seed_fas
 
     Note:
     Keep the first reads only as output
@@ -103,10 +103,12 @@ rule MEANGS:
         mkdir -p {params.outdir}
         cd {params.outdir}
 
-        if [[ {params.ref_seq} =~ \.gb[kf]?$ ]];then
-            genbank.py -f fasta {params.ref_seq} | seqkit head -n1 -w0 -o {output.seed_fas}
-        elif [[ {params.ref_seq} =~ \.fa[sta]*$ ]];
-            seqkit head -n1 -w0 -o {output.seed_fas} {params.ref_seq} 
+        ref_seq={params.ref_seq}
+
+        if [[ $ref_seq =~ \.gb[kf]?$ ]];then
+            genbank.py -f fasta $ref_seq | seqkit head -n1 -w0 -o {output.seed_fas}
+        elif [[ $ref_seq =~ \.fa[sta]*$ ]];then
+            seqkit head -n1 -w0 -o {output.seed_fas} $ref_seq 
         else
             meangs.py \\
                 -1 {input.fq1} \\
@@ -144,6 +146,8 @@ rule NOVOPlasty_config:
         output_path=NOVOPLASTY_DIR() + os.path.sep,
     message: "NOVOPlasty_config for sample: {wildcards.sample}"
     run:
+
+
         with safe_open(output.novoplasty_config, "w") as out:
             context = NOVOPLASTY_CONFIG_TPL.render(
                 seed_fasta=input.seed_fas,
