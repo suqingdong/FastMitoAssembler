@@ -8,7 +8,7 @@ LABEL author.name="suqingdong" \
 WORKDIR /work
 
 
-COPY ../environment.yml /work/
+COPY environment.yml /work/
 
 RUN \
   mamba env create -f environment.yml && \

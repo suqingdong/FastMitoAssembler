@@ -10,7 +10,7 @@ WORKDIR /work
 
 ARG ORGANELLE_DB=animal_mt
 
-COPY ../dist/FastMitoAssembler*.whl /work/
+COPY FastMitoAssembler*.whl /work/
 COPY taxdump.tar.gz /work/
 
 RUN \
