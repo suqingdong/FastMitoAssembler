@@ -1,14 +1,6 @@
 # Fast Assembler Workflow for MitoGenome
 > `FastMitoAssembler` is a software for fast, accurate assembly of mitochondrial genomes and generation of annotation documents.
 
-### Softwares
-- [MEANGS](https://github.com/YanCCscu/meangs)
-- [NOVOplasty](https://github.com/Edith1715/NOVOplasty)
-- [GetOrganelle](https://github.com/Kinggerm/GetOrganelle)
-- [SPAdes](https://github.com/ablab/spades)
-- [MitoZ](https://github.com/linzhi2013/MitoZ)
-- [NCBI-Blast](https://blast.ncbi.nlm.nih.gov/doc/blast-help/downloadblastdata.html)
-
 ### Installation
 #### 1. create environment
 ```bash
@@ -54,22 +46,22 @@ python -m pip install -U FastMitoAssembler
 python -m pip install -U dist/FastMitoAssembler*whl
 ```
 
-### Prepare
+### Prepare Database
 ```bash
 FastMitoAssembler prepare
 
 # 1. prepare ete3.NCBITaxa
-- `FastMitoAssembler prepare ncbitaxa # download taxdump.tar.gz automaticlly`
-
+FastMitoAssembler prepare ncbitaxa # download taxdump.tar.gz automaticlly
 FastMitoAssembler prepare ncbitaxa --taxdump_file taxdump.tar.gz 
 
 # 2. prepare database for GetOrganelle
 FastMitoAssembler prepare organelle --list  # list configured databases
 FastMitoAssembler prepare organelle -a animal_mt  # config a single database
-FastMitoAssembler prepare organelle -a animal_mt -a embplant_mt # config multiple databaes
+FastMitoAssembler prepare organelle -a animal_mt -a embplant_mt # config multiple databases
 FastMitoAssembler prepare organelle -a all  # config all databases
+```
 
-### Usage
+### Run Workflow
 #### Use with Client
 ```bash
 FastMitoAssembler
@@ -98,6 +90,14 @@ snakemake -s /path/to/FastMitoAssembler/smk/main.smk -c config.yaml --cores 4 --
 snakemake -s /path/to/FastMitoAssembler/smk/main.smk -c config.yaml --printshellcmds --dryrun
 ```
 
-#### Use in Docker
-[docker](./docker/README.md)
+#### Use with Docker
+[docker-readme](./docker/README.md)
 
+
+##### Softwares Used
+- [MEANGS](https://github.com/YanCCscu/meangs)
+- [NOVOplasty](https://github.com/Edith1715/NOVOplasty)
+- [GetOrganelle](https://github.com/Kinggerm/GetOrganelle)
+- [SPAdes](https://github.com/ablab/spades)
+- [MitoZ](https://github.com/linzhi2013/MitoZ)
+- [NCBI-Blast](https://blast.ncbi.nlm.nih.gov/doc/blast-help/downloadblastdata.html)
