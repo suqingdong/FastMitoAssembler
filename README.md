@@ -80,7 +80,7 @@ FastMitoAssembler run --help
 FastMitoAssembler run --configfile config.yaml
 
 # run with parameters
-FastMitoAssembler run --reads-dir ../data --samples S1 --samples S2 --meangs-path /path/to/your/meangs_dir
+FastMitoAssembler run --reads-dir ../data --samples S1 --samples S2
 
 # set cores
 FastMitoAssembler run --configfile config.yaml --cores 8
@@ -97,3 +97,9 @@ snakemake -s /path/to/FastMitoAssembler/smk/main.smk -c config.yaml --cores 4 --
 
 snakemake -s /path/to/FastMitoAssembler/smk/main.smk -c config.yaml --printshellcmds --dryrun
 ```
+
+#### Use in Docker
+<details>
+<summary> Show/Hide </summary>
+{% include_relative ./docker/README.md %}
+</details>

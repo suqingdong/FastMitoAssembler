@@ -42,6 +42,7 @@ MEANGS_DIR = partial(SAMPLE_DIR, "1.MEANGS")
 NOVOPLASTY_DIR = partial(SAMPLE_DIR, "2.NOVOPlasty")
 ORGANELL_DIR = partial(SAMPLE_DIR, "3.GetOrganelle")
 MITOZ_ANNO_DIR = partial(SAMPLE_DIR, "4.MitozAnnotate")
+MITOZ_ANNO_RESULT_DIR = partial(MITOZ_ANNO_DIR, f"{{sample}}.{ORGANELLE_DB}.K127.scaffolds.graph1.1.path_sequence.new.fasta.result")
 # ==============================================================
 
 # ==============================================================
@@ -65,7 +66,7 @@ rule all:
     message: "Congratulations, the pipeline process is complete!"
     input:
         expand(
-            MITOZ_ANNO_DIR(f"{{sample}}.{ORGANELLE_DB}.K127.scaffolds.graph1.1.path_sequence.new.fasta.result", "circos.png"),
+            MITOZ_ANNO_RESULT_DIR("circos.png"),
             sample=SAMPLES,
         ),
     run:
@@ -286,7 +287,8 @@ rule MitozAnnotate:
         fq2=FQ2,
         organelle_fasta_new=ORGANELL_DIR(f"{ORGANELLE_DB}.K127.scaffolds.graph1.1.path_sequence.new.fasta"),
     output:
-        circos=MITOZ_ANNO_DIR(f"{{sample}}.{ORGANELLE_DB}.K127.scaffolds.graph1.1.path_sequence.new.fasta.result", "circos.png"),
+        # circos=MITOZ_ANNO_DIR(f"{{sample}}.{ORGANELLE_DB}.K127.scaffolds.graph1.1.path_sequence.new.fasta.result", "circos.png"),
+        circos=MITOZ_ANNO_RESULT_DIR("circos.png"),
     params:
         outdir=MITOZ_ANNO_DIR()
     message: "MitozAnnotate for sample: {wildcards.sample}"
