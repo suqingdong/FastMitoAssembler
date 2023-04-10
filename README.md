@@ -99,7 +99,5 @@ snakemake -s /path/to/FastMitoAssembler/smk/main.smk -c config.yaml --printshell
 ```
 
 #### Use in Docker
-<details>
-<summary> Show/Hide </summary>
-{% include_relative ./docker/README.md %}
-</details>
+[docker](./docker/README.md)
+
