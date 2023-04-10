@@ -104,6 +104,7 @@ snakemake -s /path/to/FastMitoAssembler/smk/main.smk -c config.yaml --printshell
 
 ### Example Results Directory
 - `[*]` represents the main result
+
 ```
 result/
 └── 2222-4
