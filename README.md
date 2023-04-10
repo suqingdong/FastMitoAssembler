@@ -102,6 +102,33 @@ snakemake -s /path/to/FastMitoAssembler/smk/main.smk -c config.yaml --printshell
 [docker-readme](./docker/README.md)
 
 
+### Example Results Directory
+- `[*]` represents the main result
+```
+result/
+└── 2222-4
+    ├── 1.MEANGS
+    │   ├── 2222-4
+    │   ├── 2222-4_deep_detected_mito.fas  [*]
+    │   └── scaffold_seeds.fas
+    ├── 2.NOVOPlasty
+    │   ├── config.txt
+    │   ├── Contigs_1_2222-4.fasta
+    │   ├── Contigs_1_2222-4.new.fasta  [*]
+    │   ├── contigs_tmp_2222-4.txt
+    │   └── log_2222-4.txt
+    ├── 3.GetOrganelle
+    │   ├── 2222-4_1.5G.fq.gz
+    │   ├── 2222-4_2.5G.fq.gz
+    │   ├── 2222-4.fq1.stats.txt
+    │   ├── animal_mt.K127.scaffolds.graph1.1.path_sequence.new.fasta  [*]
+    │   └── organelle
+    └── 4.MitozAnnotate
+        ├── 2222-4.animal_mt.K127.scaffolds.graph1.1.path_sequence.new.fasta.result  [*]
+        └── tmp_2222-4_animal_mt.K127.scaffolds.graph1.1.path_sequence.new.fasta_mitoscaf.fa
+
+```
+
 ##### Softwares Used
 - [MEANGS](https://github.com/YanCCscu/meangs)
 - [NOVOplasty](https://github.com/Edith1715/NOVOplasty)
