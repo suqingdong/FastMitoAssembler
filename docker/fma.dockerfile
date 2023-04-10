@@ -7,16 +7,16 @@ LABEL author.name="suqingdong" \
 
 WORKDIR /work
 
-
-ARG ORGANELLE_DB=animal_mt
-
 COPY FastMitoAssembler*.whl /work/
-COPY taxdump.tar.gz /work/
+COPY etetoolkit /root/.etetoolkit
+COPY GetOrganelleDB /root/.GetOrganelle
 
 RUN \
+  source ~/.bashrc && \
   python -m pip install -U FastMitoAssembler*.whl && \
-  FastMitoAssembler prepare ncbitaxa --taxdump_file taxdump.tar.gz && \
-  FastMitoAssembler prepare organelle --add {ORGANELLE_DB} && \
-  rm -f FastMitoAssembler*.whl taxdump.tar.gz
+  rm -f FastMitoAssembler*.whl
 
-CMD ['/bin/bash', '-c', 'source', '~/.bashrc', '&&']
+
+ENTRYPOINT ["/bin/bash", "-c", "source ~/.bashrc && exec \"$@\"", "--"]
+
+CMD ["FastMitoAssembler"]
