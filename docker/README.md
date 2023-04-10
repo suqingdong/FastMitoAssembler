@@ -21,6 +21,13 @@ docker run --rm -it \
   suqingdong/fast-mito-assembler \
   snakemake -s /opt/miniconda3/envs/FastMitoAssembler/lib/python3.9/site-packages/FastMitoAssembler/smk/main.smk --configfile config.yaml --dryrun
 ```
+`config.yaml`
+```yaml
+reads_dir: 'data'
+samples: ['2222-4']
+fq_path_pattern: '{sample}/{sample}_1.clean.fq.gz'
+seed_input: '2222-4_deep_detected_mito.fas'
+```
 
 ## Use in DockerCompose
 ```yaml
