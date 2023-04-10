@@ -62,9 +62,17 @@ FastMitoAssembler prepare organelle -a all  # config all databases
 ```
 
 ### Run Workflow
+
+`config.yaml` example:
+```yaml
+reads_dir: '../data/'
+samples: ['2222-4']
+fq_path_pattern: '{sample}/{sample}_1.clean.fq.gz' # the reads 1 path pattern relative to `reads_dir`
+```
+see the main Snakefile and Template configfile with: `FastMitoAssembler --help` 
 #### Use with Client
 ```bash
-FastMitoAssembler
+FastMitoAssembler --help
 
 FastMitoAssembler run --help
 
@@ -72,7 +80,7 @@ FastMitoAssembler run --help
 FastMitoAssembler run --configfile config.yaml
 
 # run with parameters
-FastMitoAssembler run --reads-dir ../data --samples S1 --samples S2
+FastMitoAssembler run --reads_dir ../data --samples S1 --samples S2
 
 # set cores
 FastMitoAssembler run --configfile config.yaml --cores 8
