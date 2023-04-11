@@ -5,7 +5,7 @@ import yaml
 import click
 import snakemake
 
-from FastMitoAssembler import MAIN_SMK, DEFAULT_CONFIG_FILE, VERSION, BANNER
+from FastMitoAssembler import MAIN_SMK, DEFAULT_CONFIG_FILE, DEFAULT_OPTION_FILE, VERSION, BANNER
 from FastMitoAssembler.bin._run import run
 from FastMitoAssembler.bin._other import prepare
 
@@ -19,10 +19,11 @@ HELP = f'''\n\n\b\n{BANNER}\n'''
 __EPILOG__ = click.style('''
 \n\b
 Snakefile: {MAIN_SMK}
-Configfile: {CONFIG_DEFAULT}
+Configfile: {DEFAULT_CONFIG_FILE}
+Optionfile: {DEFAULT_OPTION_FILE}
 
 Contact: {author}<{author_email}>
-''', fg='white').format(MAIN_SMK=MAIN_SMK, CONFIG_DEFAULT=DEFAULT_CONFIG_FILE, **VERSION)
+''', fg='white').format(MAIN_SMK=MAIN_SMK, DEFAULT_CONFIG_FILE=DEFAULT_CONFIG_FILE, DEFAULT_OPTION_FILE=DEFAULT_OPTION_FILE, **VERSION)
 
 
 @click.group(

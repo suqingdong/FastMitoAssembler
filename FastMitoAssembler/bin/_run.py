@@ -34,7 +34,7 @@ from FastMitoAssembler import (
 @click.option('--seed_input', help='use a specific seed input, .fasta, or .gb')
 @click.option('--genes', help='the specific genes')
 
-# snakefile and configfile
+# snakefile, configfile and optionfile
 @click.option('--snakefile', help='the main snakefile', default=MAIN_SMK, show_default=True)
 @click.option('--configfile', help=f'the configfile for snakefile, template: {DEFAULT_CONFIG_FILE}')
 @click.option('--optionfile', help=f'the optionfile for snakefile, template: {DEFAULT_OPTION_FILE}')
@@ -59,7 +59,7 @@ def run(**kwargs):
         click.secho('>>> reading config from file: {configfile}'.format(**kwargs), fg='green', err=True)
         data = util.read_yaml(kwargs['configfile'])
         for key, value in data.items():
-            if value:
+            if value != '':
                 config[key] = value
     click.secho('>>> Configs:\n' + json.dumps(config, indent=2), fg='green', err=True)
 
@@ -72,10 +72,9 @@ def run(**kwargs):
         click.secho('>>> reading options from file: {optionfile}'.format(**kwargs), fg='green', err=True)
         data = util.read_yaml(kwargs['optionfile'])
         for key, value in data.items():
-            if value:
+            if value != '':
                 options[key] = value
 
     click.secho('>>> Options:\n' + json.dumps(options, indent=2), fg='green', err=True)
 
     snakemake.snakemake(kwargs['snakefile'], config=config, **options)
-
