@@ -5,7 +5,7 @@ fq_path_pattern: '{sample}/{sample}_1.clean.fq.gz'
 organelle_database: 'animal_mt'
 genome_min_size: 12000
 genome_max_size: 22000
-kmer_size: 39
+kmer_size: 33
 max_mem_gb: 10
 read_length: 150
 insert_size: 300

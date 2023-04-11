@@ -56,6 +56,7 @@ FQ2 = READS_DIR.joinpath(FQ_PATH_PATTERN.replace('1', '2'))
 # FQ1 = READS_DIR.joinpath("{sample}_1.clean.fq.gz")
 # FQ2 = READS_DIR.joinpath("{sample}_2.clean.fq.gz")
 READS_NUM_5G = round(5e9 / 2 / READ_LENGTH)
+CUT_5G_DATA = config.get('cut_5g_data', 'yes')
 # ==============================================================
 
 # default target
@@ -181,18 +182,21 @@ rule NOVOPlasty:
     input:
         novoplasty_config=NOVOPLASTY_DIR("config.txt"),
     output:
-        novoplasty_contigs=NOVOPLASTY_DIR("Contigs_1_{sample}.fasta"),
-        novoplasty_contigs_new=NOVOPLASTY_DIR("Contigs_1_{sample}.new.fasta"),
+        novoplasty_fasta=NOVOPLASTY_DIR("{sample}.novoplasty.fasta"),
+    params:
+        output_path = NOVOPLASTY_DIR(),
     message: "NOVOPlasty for sample: {wildcards.sample}"
     shell:
         """
+        cd {params.output_path}
+
         NOVOPlasty.pl -c {input.novoplasty_config}
 
         # remove +xxx
         seqkit replace -w0 \\
             -p "\+.+" -r "" \\
-            -o {output.novoplasty_contigs_new} \\
-            {output.novoplasty_contigs}
+            -o {output.novoplasty_fasta} \\
+            *{wildcards.sample}.fasta
         """
 
 rule GetOrganelle:
@@ -217,7 +221,7 @@ rule GetOrganelle:
     input:
         fq1=FQ1,
         fq2=FQ2,
-        novoplasty_contigs_new=NOVOPLASTY_DIR("Contigs_1_{sample}.new.fasta"),
+        novoplasty_fasta=NOVOPLASTY_DIR("{sample}.novoplasty.fasta"),
     output:
         organelle_fasta=ORGANELL_DIR("organelle", f"{ORGANELLE_DB}.K127.scaffolds.graph1.1.path_sequence.fasta"),
         organelle_fasta_new=ORGANELL_DIR(f"{ORGANELLE_DB}.K127.scaffolds.graph1.1.path_sequence.new.fasta"),
@@ -256,7 +260,7 @@ rule GetOrganelle:
             -o {params.output_path_temp} \\
             --reduce-reads-for-coverage inf \\
             --max-reads inf \\
-            -s {input.novoplasty_contigs_new}
+            -s {input.novoplasty_fasta}
 
         # replace '+', 'circular' characters
         seqkit replace -w0 \\

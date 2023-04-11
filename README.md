@@ -115,7 +115,7 @@ result/
     ├── 2.NOVOPlasty
     │   ├── config.txt
     │   ├── Contigs_1_2222-4.fasta
-    │   ├── Contigs_1_2222-4.new.fasta  [*]
+    │   ├── 2222-4.novoplasty.fasta  [*]
     │   ├── contigs_tmp_2222-4.txt
     │   └── log_2222-4.txt
     ├── 3.GetOrganelle
