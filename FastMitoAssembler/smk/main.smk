@@ -40,9 +40,15 @@ RESULT_DIR = Path(config.get("result_dir", "result")).resolve()
 SAMPLE_DIR = partial(os.path.join, RESULT_DIR, "{sample}")
 MEANGS_DIR = partial(SAMPLE_DIR, "1.MEANGS")
 NOVOPLASTY_DIR = partial(SAMPLE_DIR, "2.NOVOPlasty")
-ORGANELL_DIR = partial(SAMPLE_DIR, "3.GetOrganelle")
+ORGANELLE_DIR = partial(SAMPLE_DIR, "3.GetOrganelle")
 MITOZ_ANNO_DIR = partial(SAMPLE_DIR, "4.MitozAnnotate")
 MITOZ_ANNO_RESULT_DIR = partial(MITOZ_ANNO_DIR, f"{{sample}}.{ORGANELLE_DB}.K127.scaffolds.graph1.1.path_sequence.new.fasta.result")
+
+# input/output
+seed_fas = MEANGS_DIR("{sample}_deep_detected_mito.fas")
+novoplasty_config = NOVOPLASTY_DIR("config.txt")
+novoplasty_fasta = NOVOPLASTY_DIR("{sample}.novoplasty.fasta")
+organelle_fasta_new = ORGANELLE_DIR(f"{ORGANELLE_DB}.K127.scaffolds.graph1.1.path_sequence.new.fasta")
 # ==============================================================
 
 # ==============================================================
@@ -96,7 +102,7 @@ rule MEANGS:
         fq1=FQ1,
         fq2=FQ2,
     output:
-        seed_fas=MEANGS_DIR("{sample}_deep_detected_mito.fas"),
+        seed_fas=seed_fas,
     params:
         outdir=MEANGS_DIR(),
         seed_input=SEED_INPUT,
@@ -142,9 +148,9 @@ rule NOVOPlasty_config:
     input:
         fq1=FQ1,
         fq2=FQ2,
-        seed_fas=MEANGS_DIR("{sample}_deep_detected_mito.fas"),
+        seed_fas=seed_fas,
     output:
-        novoplasty_config=NOVOPLASTY_DIR("config.txt"),
+        novoplasty_config=novoplasty_config,
     params:
         output_path=NOVOPLASTY_DIR() + os.path.sep,
     message: "NOVOPlasty_config for sample: {wildcards.sample}"
@@ -180,9 +186,9 @@ rule NOVOPlasty:
     novoplasty_contigs_new: The assembled mitochondrial genome in FASTA format.
     """
     input:
-        novoplasty_config=NOVOPLASTY_DIR("config.txt"),
+        novoplasty_config=novoplasty_config,
     output:
-        novoplasty_fasta=NOVOPLASTY_DIR("{sample}.novoplasty.fasta"),
+        novoplasty_fasta=novoplasty_fasta,
     params:
         output_path = NOVOPLASTY_DIR(),
     message: "NOVOPlasty for sample: {wildcards.sample}"
@@ -221,13 +227,13 @@ rule GetOrganelle:
     input:
         fq1=FQ1,
         fq2=FQ2,
-        novoplasty_fasta=NOVOPLASTY_DIR("{sample}.novoplasty.fasta"),
+        novoplasty_fasta=novoplasty_fasta,
     output:
-        organelle_fasta=ORGANELL_DIR("organelle", f"{ORGANELLE_DB}.K127.scaffolds.graph1.1.path_sequence.fasta"),
-        organelle_fasta_new=ORGANELL_DIR(f"{ORGANELLE_DB}.K127.scaffolds.graph1.1.path_sequence.new.fasta"),
+        organelle_fasta_new=organelle_fasta_new,
     params:
-        output_path=ORGANELL_DIR(),
-        output_path_temp=ORGANELL_DIR("organelle"),
+        output_path=ORGANELLE_DIR(),
+        output_path_temp=ORGANELLE_DIR("organelle"),
+        organelle_fasta=ORGANELLE_DIR("organelle", f"{ORGANELLE_DB}.K127.scaffolds.graph1.1.path_sequence.fasta"),
     message: "GetOrganelle for sample: {wildcards.sample}"
     shell:
         """
@@ -267,7 +273,7 @@ rule GetOrganelle:
             -p ".*(circulars).*" -r "{wildcards.sample} topology=circular" \\
             -p ".+" -r "{wildcards.sample} topology=linear" \\
             -o {output.organelle_fasta_new} \\
-            {output.organelle_fasta}
+            {params.organelle_fasta}
     """
 
 rule MitozAnnotate:
@@ -289,9 +295,8 @@ rule MitozAnnotate:
     input:
         fq1=FQ1,
         fq2=FQ2,
-        organelle_fasta_new=ORGANELL_DIR(f"{ORGANELLE_DB}.K127.scaffolds.graph1.1.path_sequence.new.fasta"),
+        organelle_fasta_new=organelle_fasta_new,
     output:
-        # circos=MITOZ_ANNO_DIR(f"{{sample}}.{ORGANELLE_DB}.K127.scaffolds.graph1.1.path_sequence.new.fasta.result", "circos.png"),
         circos=MITOZ_ANNO_RESULT_DIR("circos.png"),
     params:
         outdir=MITOZ_ANNO_DIR()
