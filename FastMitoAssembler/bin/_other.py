@@ -7,7 +7,7 @@ ORGANELLE_DB_LIST = ['all', 'embplant_pt', 'embplant_mt', 'embplant_nr', 'fungus
 
 NCBI_TAXDUMP = 'https://ftp.ncbi.nih.gov/pub/taxonomy/taxdump.tar.gz'
 
-@click.group(help='prepare data')
+@click.group(help=click.style('prepare database', fg='cyan', bold=True))
 def prepare():
     pass
 

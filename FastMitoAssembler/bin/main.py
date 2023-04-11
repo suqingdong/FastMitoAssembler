@@ -5,7 +5,7 @@ import yaml
 import click
 import snakemake
 
-from FastMitoAssembler import MAIN_SMK, CONFIG_DEFAULT, VERSION, BANNER
+from FastMitoAssembler import MAIN_SMK, DEFAULT_CONFIG_FILE, VERSION, BANNER
 from FastMitoAssembler.bin._run import run
 from FastMitoAssembler.bin._other import prepare
 
@@ -22,7 +22,7 @@ Snakefile: {MAIN_SMK}
 Configfile: {CONFIG_DEFAULT}
 
 Contact: {author}<{author_email}>
-''', fg='white').format(MAIN_SMK=MAIN_SMK, CONFIG_DEFAULT=CONFIG_DEFAULT, **VERSION)
+''', fg='white').format(MAIN_SMK=MAIN_SMK, CONFIG_DEFAULT=DEFAULT_CONFIG_FILE, **VERSION)
 
 
 @click.group(
