@@ -131,7 +131,7 @@ rule MEANGS:
                 -i 350 \\
                 --deepin
             seqkit head -n1 -w0 -o {output.seed_fas} {wildcards.sample}/{wildcards.sample}_deep_detected_mito.fas
-        fi) 2> {log}
+        fi) 2>{log}.stderr 1>{log}.stdout
         """
 
 rule NOVOPlasty_config:
@@ -206,7 +206,7 @@ rule NOVOPlasty:
             -p "\+.+" -r "" \\
             -o {output.novoplasty_fasta} \\
             *{wildcards.sample}.fasta
-        ) 2> {log}
+        ) 2>{log}.stderr 1>{log}.stdout
         """
 
 rule GetOrganelle:
@@ -279,7 +279,7 @@ rule GetOrganelle:
         seqkit replace -w0 \\
             -p "^scaffold.*" -r "{wildcards.sample} topology=linear" \\
             -o {output.organelle_fasta_new}
-        ) 2> {log}
+        ) 2>{log}.stderr 1>{log}.stdout
     """
 
 rule MitozAnnotate:
@@ -323,5 +323,5 @@ rule MitozAnnotate:
             --species_name "{wildcards.sample}" \\
             --genetic_code {GENETIC_CODE} \\
             --clade {CLADE}
-        ) 2> {log}
+        ) 2>{log}.stderr 1>{log}.stdout
         """
