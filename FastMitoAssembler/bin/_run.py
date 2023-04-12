@@ -63,6 +63,10 @@ def run(**kwargs):
                 config[key] = value
     click.secho('>>> Configs:\n' + json.dumps(config, indent=2), fg='green', err=True)
 
+    if not all([isinstance(sample, str) for sample in config['samples']]):
+        click.secho('sample name must be a string, please check your input: {samples}'.format(**config), fg='red')
+        exit(1)
+
     options = {
         'cores': kwargs['cores'],
         'dryrun': kwargs['dryrun'],
