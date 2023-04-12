@@ -46,6 +46,9 @@ ORGANELLE_DIR = partial(SAMPLE_DIR, "3.GetOrganelle")
 MITOZ_ANNO_DIR = partial(SAMPLE_DIR, "4.MitozAnnotate")
 MITOZ_ANNO_RESULT_DIR = partial(MITOZ_ANNO_DIR, f"{{sample}}.{ORGANELLE_DB}.get_organelle.fasta.result")
 
+# Benchmark directory
+BENCHMARK_DIR = Path(config.get("benchmark_dir", "benchmark")).resolve()
+
 # input/output
 seed_fas = MEANGS_DIR("{sample}_deep_detected_mito.fas")
 novoplasty_config = NOVOPLASTY_DIR("config.txt")
@@ -108,6 +111,7 @@ rule MEANGS:
         seed_input=SEED_INPUT,
     message: "MEANGS for sample: {wildcards.sample}"
     log: LOG_DIR.joinpath('{sample}', 'meangs.log')
+    benchmark: BENCHMARK_DIR.joinpath('{sample}', 'meangs.stat')
     shell:
         """
         (mkdir -p {params.outdir}
@@ -192,6 +196,7 @@ rule NOVOPlasty:
         output_path = NOVOPLASTY_DIR(),
     message: "NOVOPlasty for sample: {wildcards.sample}"
     log: LOG_DIR.joinpath('{sample}', 'novoplasty.log')
+    benchmark: BENCHMARK_DIR.joinpath('{sample}', 'novoplasty.stat')
     shell:
         """
         (
@@ -236,6 +241,7 @@ rule GetOrganelle:
         output_path_temp=ORGANELLE_DIR("organelle"),
     message: "GetOrganelle for sample: {wildcards.sample}"
     log: LOG_DIR.joinpath('{sample}', 'get_organelle.log')
+    benchmark: BENCHMARK_DIR.joinpath('{sample}', 'get_organelle.stat')
     shell:
         """
         (
@@ -307,6 +313,7 @@ rule MitozAnnotate:
         outdir=MITOZ_ANNO_DIR()
     message: "MitozAnnotate for sample: {wildcards.sample}"
     log: LOG_DIR.joinpath('{sample}', 'mitoz_annotate.log')
+    benchmark: BENCHMARK_DIR.joinpath('{sample}', 'mitoz_annotate.stat')
     shell:
         """
         (
