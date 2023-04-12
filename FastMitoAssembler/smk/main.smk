@@ -74,13 +74,11 @@ rule all:
     """
     message: "Congratulations, the pipeline process is complete!"
     input:
-        expand(
-            MITOZ_ANNO_RESULT_DIR("circos.png"),
-            sample=SAMPLES,
-        ),
+        expand(MITOZ_ANNO_RESULT_DIR("circos.png"), sample=SAMPLES),
+        expand(MITOZ_ANNO_RESULT_DIR("summary.txt"), sample=SAMPLES),
+        expand(MITOZ_ANNO_RESULT_DIR(f"{{sample}}_{ORGANELLE_DB}.get_organelle.fasta_mitoscaf.fa.gbf"), sample=SAMPLES),
     run:
         print('ok')
-
 
 rule MEANGS:
     """
@@ -296,7 +294,6 @@ rule MitozAnnotate:
 
     Params:
     outdir: Path to the directory where the output files should be saved.
-
     """
     input:
         fq1=FQ1,
@@ -304,6 +301,8 @@ rule MitozAnnotate:
         organelle_fasta_new=organelle_fasta_new,
     output:
         circos=MITOZ_ANNO_RESULT_DIR("circos.png"),
+        summary=MITOZ_ANNO_RESULT_DIR("summary.txt"),
+        genbank=MITOZ_ANNO_RESULT_DIR(f"{{sample}}_{ORGANELLE_DB}.get_organelle.fasta_mitoscaf.fa.gbf"),
     params:
         outdir=MITOZ_ANNO_DIR()
     message: "MitozAnnotate for sample: {wildcards.sample}"
