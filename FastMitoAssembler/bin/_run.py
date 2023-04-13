@@ -1,7 +1,6 @@
 import os
 import json
 
-import yaml
 import click
 import snakemake
 
@@ -51,8 +50,7 @@ def run(**kwargs):
         'read_length max_mem_gb seed_input genes fq_path_pattern '
     ).strip().split()
     for key in arguments:
-        if kwargs[key]:
-            config[key] = kwargs[key]
+        config[key] = kwargs[key]
 
     # higher priority
     if kwargs['configfile'] and os.path.isfile(kwargs['configfile']):
@@ -62,6 +60,16 @@ def run(**kwargs):
             if value != '':
                 config[key] = value
     click.secho('>>> Configs:\n' + json.dumps(config, indent=2), fg='green', err=True)
+
+    if not (config['reads_dir'] and config['samples']):
+        click.secho(f'reads_dir and samples must supply!', err=True, fg='red')
+        exit(1)
+
+    for sample in config['samples']:
+        fq1 = os.path.join(config['reads_dir'], config['fq_path_pattern']).format(sample=sample)
+        if not os.path.isfile(fq1):
+            click.secho(f'reads file not exists, please check: {fq1}', err=True, fg='red')
+            exit(1)
 
     if not all([isinstance(sample, str) for sample in config['samples']]):
         click.secho('sample name must be a string, please check your input: {samples}'.format(**config), fg='red')
