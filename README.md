@@ -122,11 +122,11 @@ result/
     │   ├── 2222-4_1.5G.fq.gz
     │   ├── 2222-4_2.5G.fq.gz
     │   ├── 2222-4.fq1.stats.txt
-    │   ├── animal_mt.K127.scaffolds.graph1.1.path_sequence.new.fasta  [*]
+    │   ├── animal_mt.get_organelle.fasta  [*]
     │   └── organelle
     └── 4.MitozAnnotate
-        ├── 2222-4.animal_mt.K127.scaffolds.graph1.1.path_sequence.new.fasta.result  [*]
-        └── tmp_2222-4_animal_mt.K127.scaffolds.graph1.1.path_sequence.new.fasta_mitoscaf.fa
+        ├── 2222-4.animal_mt.get_organelle.fasta.result  [*]
+        └── tmp_2222-4_animal_mt.get_organelle.fasta_mitoscaf.fa
 
 ```
 
