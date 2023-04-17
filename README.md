@@ -87,6 +87,12 @@ FastMitoAssembler run --configfile config.yaml --cores 8
 
 # dryrun the workflow
 FastMitoAssembler run --configfile config.yaml --dryrun
+
+# run with options
+FastMitoAssembler run --configfile config.yaml --optionfile options.yaml
+# cat options.yaml
+# printshellcmds: true
+# cores: 2
 ```
 #### Use with Snakemake
 ```bash
@@ -96,6 +102,17 @@ snakemake -s /path/to/FastMitoAssembler/smk/main.smk -c config.yaml --cores 4
 snakemake -s /path/to/FastMitoAssembler/smk/main.smk -c config.yaml --cores 4 --printshellcmds
 
 snakemake -s /path/to/FastMitoAssembler/smk/main.smk -c config.yaml --printshellcmds --dryrun
+```
+
+#### Use with Cluster
+```bash
+FastMitoAssembler run --configfile config.yaml --optionfile options.yaml
+```
+```yaml
+# options.yaml
+jobs: 4
+cluster: "qsub -V -cwd -S /bin/bash"
+drmaa_log_dir: "logs"
 ```
 
 #### Use with Docker
