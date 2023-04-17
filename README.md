@@ -106,13 +106,12 @@ snakemake -s /path/to/FastMitoAssembler/smk/main.smk -c config.yaml --printshell
 
 #### Use with Cluster
 ```bash
+mkdir -p logs/sge/
 FastMitoAssembler run --configfile config.yaml --optionfile options.yaml
 ```
 ```yaml
 # options.yaml
-jobs: 4
-cluster: "qsub -V -cwd -S /bin/bash"
-drmaa_log_dir: "logs"
+cluster: "qsub -V -cwd -S /bin/bash -e logs/sge/ -o logs/sge/"
 ```
 
 #### Use with Docker
