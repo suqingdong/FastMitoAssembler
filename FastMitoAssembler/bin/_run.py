@@ -43,14 +43,14 @@ from FastMitoAssembler import (
 @click.option('--dryrun', help='do not execute anything, and display what would bedone', is_flag=True)
 def run(**kwargs):
 
-    config = {}
+    configs = {}
     arguments = (
         'reads_dir result_dir organelle_database samples '
         'genetic_code genome_min_size genome_max_size insert_size kmer_size '
         'read_length max_mem_gb seed_input genes fq_path_pattern '
     ).strip().split()
     for key in arguments:
-        config[key] = kwargs[key]
+        configs[key] = kwargs[key]
 
     # higher priority
     if kwargs['configfile'] and os.path.isfile(kwargs['configfile']):
@@ -58,21 +58,21 @@ def run(**kwargs):
         data = util.read_yaml(kwargs['configfile'])
         for key, value in data.items():
             if value != '':
-                config[key] = value
-    click.secho('>>> Configs:\n' + json.dumps(config, indent=2), fg='green', err=True)
+                configs[key] = value
+    click.secho('>>> Configs:\n' + json.dumps(configs, indent=2), fg='green', err=True)
 
-    if not (config['reads_dir'] and config['samples']):
+    if not (configs['reads_dir'] and configs['samples']):
         click.secho(f'reads_dir and samples must supply!', err=True, fg='red')
         exit(1)
 
-    for sample in config['samples']:
-        fq1 = os.path.join(config['reads_dir'], config['fq_path_pattern']).format(sample=sample)
+    for sample in configs['samples']:
+        fq1 = os.path.join(configs['reads_dir'], configs['fq_path_pattern']).format(sample=sample)
         if not os.path.isfile(fq1):
             click.secho(f'reads file not exists, please check: {fq1}', err=True, fg='red')
             exit(1)
 
-    if not all([isinstance(sample, str) for sample in config['samples']]):
-        click.secho('sample name must be a string, please check your input: {samples}'.format(**config), fg='red')
+    if not all([isinstance(sample, str) for sample in configs['samples']]):
+        click.secho('sample name must be a string, please check your input: {samples}'.format(**configs), fg='red')
         exit(1)
 
     options = {
@@ -89,4 +89,4 @@ def run(**kwargs):
 
     click.secho('>>> Options:\n' + json.dumps(options, indent=2), fg='green', err=True)
 
-    snakemake.snakemake(kwargs['snakefile'], config=config, **options)
+    snakemake.snakemake(kwargs['snakefile'], config=configs, **options)

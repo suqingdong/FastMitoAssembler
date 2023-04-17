@@ -14,6 +14,9 @@ sys.path.insert(0, FAST_MITO_AS_PATH)
 from FastMitoAssembler.config import NOVOPLASTY_CONFIG_TPL
 from FastMitoAssembler.util import safe_open
 
+# --gui mode, config object not work, need use configfile instead.
+# configfile: 'config.yaml'
+
 # ==============================================================
 # Configuration information
 SAMPLES = config.get("samples")
